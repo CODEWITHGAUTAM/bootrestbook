@@ -1,6 +1,7 @@
 package com.api.book.bootrestbook.services;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -28,6 +29,43 @@ public class BookService {
         Book book=null;
         book=list.stream().filter(e->e.getId()==id).findFirst().get();
         return book;
+    }
+    //Adding the book
+    public Book addBook(Book b)
+    {
+        list.add(b);
+        return b;
+    }
+    //Deleting the book
+
+    public void deleteBook(int bId)
+    {
+       Iterator<Book> i=list.iterator();
+       while(i.hasNext())
+       {
+        Book b=i.next();
+        if(b.getId()==bId)
+        {
+            list.remove(b);
+        }
+       }
+    }
+
+    //Updating the book
+
+    public void updateBook(Book book,int bookId)
+    {
+        
+        Iterator<Book> i=list.iterator();
+       while(i.hasNext())
+       {
+        Book b=i.next();
+        if(b.getId()==bookId)
+        {
+            list.remove(b);
+            list.add(book);
+        }
+       }
     }
 
 
