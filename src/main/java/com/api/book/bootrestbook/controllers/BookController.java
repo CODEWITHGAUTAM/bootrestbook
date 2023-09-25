@@ -1,8 +1,11 @@
 package com.api.book.bootrestbook.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,26 +29,48 @@ public class BookController {
     //@RequestMapping(value = "/books",method = RequestMethod.GET)
     //get all books handler
     @GetMapping("/books")
-    public List<Book> getBooks()
+    public ResponseEntity<List<Book>> getBooks()
     {
-        return this.bookService.getAllBooks();
+        List<Book> list=this.bookService.getAllBooks();
+        if(list.size()==0)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(list);
+
     }
     
     //get single book handler
 
     @GetMapping("/books/{id}")
-    public Book getBook(@PathVariable("id") int id)
+    public ResponseEntity<Book> getBook(@PathVariable("id") int id)
     {
-        return bookService.getBookById(id);
+        Book book=bookService.getBookById(id);
+        if(book==null)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.of(Optional.of(book));
     }
+        
+    
 
     //post book handler
 
     @PostMapping("/books")
-    public Book addBook(@RequestBody Book book)
+    public ResponseEntity<Book> addBook(@RequestBody Book book)
     {
-       Book b= this.bookService.addBook(book);
-        return b;
+       Book b=null;
+       try{
+       b= this.bookService.addBook(book);
+       return ResponseEntity.of(Optional.of(b));
+       }
+       catch(Exception e)
+       {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+       }
+        
     }
 
     //Delete book handler
